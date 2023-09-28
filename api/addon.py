@@ -1,25 +1,26 @@
 from flask import Flask, Response, jsonify, url_for, abort
 
 MANIFEST = {
-    'id': 'org.stremio.sampleaddon',
-    'version': '1.0.0',
-
-    'name': 'Hello World Python Addon',
-    'description': 'Sample addon made with Express providing a few public domain movies',
-
-    'types': ['movie', 'series'],
-
-    'catalogs': [
-            {'type': 'movie', 'id': 'Hello, Python'},
-            {'type': 'series', 'id': 'Hello, Python'}
-    ],
-
-    'resources': [
-        'catalog',
-        # The meta call will be invoked only for series with ID starting with hpy
-        {'name': "meta", 'types': ["series"], 'idPrefixes': ["hpy"]},
-        {'name': 'stream', 'types': [
-            'movie', 'series'], 'idPrefixes': ['tt', 'hpy']}
+    "id": "com.stremio.coconutscraper",
+    "name": "CoconutScraper",
+    "description": "Stremio addon to stream real-debrid links for Indian movies from 1tamilmv",
+    "version": "1.0.0",
+    "resources": ["catalog", "meta", "stream"],
+    "types": ["movie"],
+    "idPrefixes": ["tt"],
+    "catalogs": [
+        {
+            "type": "movie",
+            "id": "moviesMalayalam",
+            "name": "CS: Malayalam Movies",
+            "extra": [
+                {
+                    "name": "quality",
+                    "options": ["CAM", "HD"],
+                    "isRequired": True
+                 }
+            ]
+        },
     ]
 }
 
@@ -111,6 +112,7 @@ OPTIONAL_META = ["posterShape", "background", "logo", "videos", "description", "
                  "dvdRelease", "released", "inTheaters", "certification", "runtime", "language", "country", "awards", "website", "isPeered"]
 
 app = Flask(__name__)
+app.json.sort_keys = False
 
 def respond_with(data):
     resp = jsonify(data)
@@ -118,6 +120,22 @@ def respond_with(data):
     resp.headers['Access-Control-Allow-Headers'] = '*'
     return resp
 
+
+@app.route('/')
+def root():
+    return 'This is my stremio addon homepage'
+
+@app.route('/projects/')
+def projects():
+    return 'The project page'
+
+@app.route('/projects/about')
+def projects_about():
+    return 'The project about page'
+
+@app.route('/about')
+def about():
+    return 'The about page'
 
 @app.route('/manifest.json')
 def addon_manifest():
